@@ -1,0 +1,190 @@
+<ng-template #content let-modal data-keyboard="false" data-backdrop="false">
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Report Criteria</h4>
+      <button type="button" class="close text-danger" aria-label="Close" data-dismiss="modal" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="showAlert" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>Error! </strong> {{alertMsg}}
+        <button  type="button" class="close" data-dismiss="alert" aria-label="Close" (click)="closeAlert()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+  
+      <form [formGroup]="reportcriteria">
+        <div>
+          <label for="fromDate">Trial Date</label>
+          <div class="input-group">
+            <input type="text" placeholder="dd/mm/yyyy" class="form-control" disabled bsDatepicker
+              formControlName="fromDate" [bsConfig]="{ dateInputFormat: 'DD/MM/YYYY', containerClass:'theme-dark-blue' }"
+              [isOpen]="isOpenFromDp">
+            <div class="input-group-append">
+              <button mat-raised-button class="btn btn-outline-secondary" type="button" (click)="isOpenFromDp = !isOpenFromDp">
+                <i class="fa fa-calendar" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button mat-raised-button class="btn btn-primary" (click)="SubmitReport()">Submit</button> &nbsp;
+      <button mat-raised-button class="btn btn-light" (click)="modalRef.hide()">Close</button>
+    </div>
+  </ng-template>
+  <div class="row d-flex justify-content-center align-items-center pt-4"
+    style="background-color: #78c2ad21; min-height: 20vh;">
+  
+    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 shadow-sm mb-4 bg-white p-3">
+      <div>
+        <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="closeScreen()">Close</button>
+        <!-- <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="downloadexcel()">Export as CSV</button> -->
+        <button mat-raised-button type="button" 
+        class="btn btn-rounded btn-primary m-1" 
+        [useExistingCss]="true"
+        printSectionId="mattable" 
+        ngxPrint>Print</button>
+        <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="onLoadScreen(content)">Retrieve</button>
+        <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="downloadexcel()">Export as EXCEL</button>
+        
+      </div>
+    </div>
+  
+    <!-- <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 shadow-lg mb-4 bg-white p-3"> -->
+    <div class="col-xs-12 col-sm-12 shadow-lg mb-4 bg-white p-3 ">
+       
+      <!-- <div class="justify-content-center" style="text-align:center" *ngIf="reportData">
+        <div style="display:inline-block">
+          <h6>{{ardbName}} {{branchName}}</h6>
+        </div>
+        <h6>Run Date & Time : {{today}} </h6> <br>
+        <h6> <u> Trial Balance as on {{this.reportcriteria.controls.fromDate.value.toDateString()| date: 'dd/MM/yyyy'}}</u></h6>
+      </div> -->
+     
+      <div class="mat-elevation-z8" id="mattable">
+       
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
+    <!-- <mat-paginator [length]="resultLength" showFirstLastButtons [pageSizeOptions]="[1,2,3,resultLength]" MatPaginator></mat-paginator> -->
+  
+      <!-- <ng-container matColumnDef="acc_type">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Account Type </mat-header-cell>
+        <mat-cell *matCellDef="let element">
+          <ng-container>
+           {{element.acc_type.acc_type}}
+          </ng-container>
+         
+          </mat-cell>
+      </ng-container> -->
+      <!-- <ng-container matColumnDef="mainHeader"> 
+        <th mat-header-cell *matHeaderCellDef mat-sort-header style="text-align:center">  -->
+        <!-- <div  *ngIf="reportData">
+              
+          <div style="display:inline-block">
+  
+            <h4>{{ardbName}} ({{branchName}})</h4>
+          </div>
+          <h4>Run Date & Time : {{today}} </h4> <br>
+          <h4> <u> Trial Balance as on {{this.reportcriteria.controls.fromDate.value.toDateString()| date: 'dd/MM/yyyy'}}</u></h4>
+        </div> -->
+      <!-- </th>
+      </ng-container> -->
+      <ng-container matColumnDef="mainHeader">
+        <th mat-header-cell *matHeaderCellDef >
+          <div class="justify-content-center" style="text-align:center">
+            <br><h4>{{ardbName}} ({{branchName}})</h4>
+            
+            <h4>Run Date & Time : {{today}} </h4> <br>
+            <h4> <u> Consolidated Trial Balance as on {{this.reportcriteria.controls.fromDate.value.toDateString()| date: 'dd/MM/yyyy'}}</u></h4>
+          
+          </div>
+        </th>
+      </ng-container>
+      <ng-container matColumnDef="acc_cd"  >
+        <th mat-header-cell *matHeaderCellDef ></th>
+        <td *matCellDef="let row"style="padding-top:20px;">  <b style="font-size:20px; padding-left:50%;"> <u>{{row.acc_type.acc_type}}</u></b>
+          <table > 
+            <ng-container>
+              <tr mat-cell style="height: 40px;">
+                <th mat-header-cell style="text-align:center!important;">Acc CD</th>
+                <th mat-header-cell style="text-align:left!important;">Acc Name</th> 
+                
+                <th mat-header-cell style="text-align:right!important;">Debit</th>
+                <th mat-header-cell style="text-align:right!important;">Credit</th>
+              </tr>
+                    <tbody>
+                        <tr *ngFor="let sbca of row.trailbalance">
+                          <td mat-cell style="text-align:center!important;">{{sbca.acc_cd}} </td>
+                          <td mat-cell>{{sbca.acc_name}}</td>
+                          <td mat-cell style="text-align:right!important;">{{sbca.dr|currency:'INR'}} </td>
+                          <td mat-cell style="text-align:right!important;">{{sbca.cr |currency:'INR'}} </td>
+                          
+                        </tr>
+                        <tr mat-cell *ngIf="row.acc_type.acc_type=='Liabiliy'">
+                          <td mat-cell colspan="2" style="text-align:right!important;"><b>Total Liabiliy:</b> </td>
+                          <td mat-cell  style="text-align:right!important;"><b>{{liDrSum|currency:'INR'}}</b> </td>
+                          <td mat-cell style="text-align:right!important;"><b>{{liCrSum|currency:'INR'}}</b></td>
+                        </tr>
+                        <tr mat-cell *ngIf="row.acc_type.acc_type=='Asset'">
+                          <td mat-cell colspan="2" style="text-align:right!important;"><b>Total Asset:</b> </td>
+                          <td mat-cell  style="text-align:right!important;"><b>{{asDrSum|currency:'INR'}}</b> </td>
+                          <td mat-cell style="text-align:right!important;"><b>{{asCrSum|currency:'INR'}}</b></td>
+                        </tr> 
+                        <tr mat-cell *ngIf="row.acc_type.acc_type=='Revenue'">
+                          <td mat-cell colspan="2" style="text-align:right!important;"><b>Total Revenue:</b> </td>
+                          <td mat-cell  style="text-align:right!important;"><b>{{revDrSum|currency:'INR'}}</b> </td>
+                          <td mat-cell style="text-align:right!important;"><b>{{revCrSum|currency:'INR'}}</b></td>
+                        </tr> 
+                        <tr mat-cell *ngIf="row.acc_type.acc_type=='Expanse'">
+                          <td mat-cell colspan="2" style="text-align:right!important;"><b>Total Expanse:</b> </td>
+                          <td mat-cell  style="text-align:right!important;"><b>{{exDrSum|currency:'INR'}}</b> </td>
+                          <td mat-cell style="text-align:right!important;"><b>{{exCrSum|currency:'INR'}}</b></td>
+                        </tr>
+                        <tr mat-cell *ngIf="row.acc_type.acc_type=='Expanse'">
+                          <td mat-cell colspan="2" style="text-align:right!important;"><b>Grand Total:</b> </td>
+                          <td mat-cell  style="text-align:right!important;"><b>{{liDrSum+asDrSum+revDrSum+exDrSum|currency:'INR'}}</b> </td>
+                          <td mat-cell style="text-align:right!important;"><b>{{liCrSum+asCrSum+revCrSum+exCrSum|currency:'INR'}}</b></td>
+                        </tr>
+                    </tbody>
+            </ng-container>
+          </table>
+      </td>
+      </ng-container>   
+          
+            
+         
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="['mainHeader']"></tr>
+      <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
+      <!-- <tr mat-footer-row *matFooterRowDef="displayedColumns" class="example-first-footer-row"></tr> -->
+    <!-- <tr mat-footer-row *matFooterRowDef="['disclaimer']" class="example-second-footer-row"></tr> -->
+    </table>
+    <footer>
+      <small>
+        This report is generated through CFS-2022
+       </small>
+     </footer>
+    </div>
+    <!-- <mat-paginator [length]="resultLength" showFirstLastButtons [pageSizeOptions]="[1,2,3,resultLength]" MatPaginator></mat-paginator> -->
+    
+
+      <!-- <iframe id="ifrmrpt" *ngIf="ReportUrl" [src]="ReportUrl" width="100%" height="700px" (load)="oniframeLoad()" allowfullscreen></iframe> -->
+    </div>
+  
+    <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 shadow-sm mb-4 bg-white p-3">
+      <div>
+        <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="closeScreen()">Close</button>
+        <!-- <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="downloadexcel()">Export as CSV</button> -->
+        <button mat-raised-button type="button" 
+        class="btn btn-rounded btn-primary m-1" 
+        [useExistingCss]="true"
+        printSectionId="mattable" 
+        ngxPrint>Print</button>
+        <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="onLoadScreen(content)">Retrieve</button>
+        <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="downloadexcel()">Export as EXCEL</button>
+
+      </div>
+    </div>
+  </div>
+  <loading *ngIf="isLoading"></loading>
