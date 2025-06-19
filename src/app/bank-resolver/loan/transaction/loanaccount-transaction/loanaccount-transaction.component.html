@@ -1453,7 +1453,7 @@
     <button mat-raised-button type="button" class="btn btn-primary btn-sm ml-1 mr-1">Cancel</button>
     <button mat-raised-button type="button" class="btn btn-primary btn-sm ml-1 mr-1" (click)="onSaveClick()">Save</button>
 
-    <!-- <button mat-raised-button type="button" class="btn btn-primary btn-sm ml-1 mr-1" style="position: absolute;right: 10px;" (click)="printChallan()">Print Challan</button> -->
+    <button *ngIf="sys.ardbCD=='2'" mat-raised-button type="button" class="btn btn-primary btn-sm ml-1 mr-1" style="position: absolute;right: 10px;" (click)="printChallan()">Print Challan</button>
   
   </div>
   </ng-template>

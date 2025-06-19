@@ -1524,6 +1524,8 @@ export class LoanaccountTransactionComponent implements OnInit {
           this.aCD=acc.tmloanall.acc_cd
           this.ln_id=Number(acc.tmloanall.loan_id)
           this.acDesc=this.AcctTypes.filter(e=>e.acc_type_cd==this.aCD)[0].acc_type_desc
+          this.l_case_no=this.acc2.tdloansancsetlist[0]?.tdloansancset.filter(e=>e.param_cd=='500')[0]?.param_value
+
           debugger
           console.log(acc)
           ////debugger

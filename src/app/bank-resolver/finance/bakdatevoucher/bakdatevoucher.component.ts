@@ -862,7 +862,7 @@ debugger
     console.log(this.dayDiff(dt1, this.sys.CurrentDate));
     const convertedDate = this.convertToDate(this.sys.FinYearClose);
     
-    if ((this.dayDiff(dt1, this.sys.CurrentDate)>= 0) && this.sys.prevStatus=='Y') {
+    if ((this.dayDiff(dt1, this.sys.CurrentDate)>= 0)) {
       this.HandleMessage(true, MessageType.Error, 'Future or same day Voucher can not allow from this screen...');
       this._voucherDt=null;
       this.isSave=true;
