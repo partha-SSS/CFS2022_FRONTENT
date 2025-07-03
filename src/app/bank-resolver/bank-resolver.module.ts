@@ -281,6 +281,7 @@ import {MatBadgeModule} from '@angular/material/badge';
 import { DuplicateChallPrintComponent } from './loan/report/duplicate-chall-print/duplicate-chall-print.component';
 import { PsMasterContaiComponent } from './loan/masters/ps-master-contai/ps-master-contai.component';
 import { PoMasterContaiComponent } from './loan/masters/po-master-contai/po-master-contai.component';
+import { AlertModule } from 'ngx-bootstrap/alert';
 @NgModule({
   declarations: [
     RoundPipe ,UppercaseDirective, MatchAccountNumbersDirective, NumericOnlyDirective,
@@ -350,7 +351,7 @@ import { PoMasterContaiComponent } from './loan/masters/po-master-contai/po-mast
     ReactiveFormsModule, FormsModule, AutocompleteLibModule, MatExpansionModule, MatSelectModule,MatListModule,
     BsDatepickerModule.forRoot(), AccordionModule.forRoot(), MatSnackBarModule, MatTooltipModule,
     TypeaheadModule.forRoot(),HttpClientJsonpModule,
-    ExportAsModule,HttpClientModule,MatRadioModule
+    ExportAsModule,HttpClientModule,MatRadioModule,AlertModule.forRoot()
   ],
   providers: [
     PaginationConfig,

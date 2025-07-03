@@ -2819,15 +2819,47 @@ export class OnetimesettlementComponent implements OnInit {
   }
 
 
-  private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
-    this.showMsg = new ShowMessage();
-    this.showMsg.Show = show;
-    this.showMsg.Type = type;
-    this.showMsg.Message = message;
-    // setTimeout(() => {
-    //   this.showMsg = new ShowMessage();
-    // }, 3000);
+ getAlertClass(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return 'alert-success';
+    case MessageType.Warning:
+      return 'alert-warning';
+    case MessageType.Info:
+      return 'alert-info';
+    case MessageType.Error:
+      return 'alert-danger';
+    default:
+      return 'alert-info';
   }
+}
+private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
+  this.showMsg = new ShowMessage();
+  this.showMsg.Show = show;
+  this.showMsg.Type = type;
+  this.showMsg.Message = message;
+// this.disableAll = true; this.disableAccountTypeAndNo = true;
+  if (show) {
+    setTimeout(() => {
+      this.showMsg.Show = false;
+    }, 5000); // auto-close after 4 sec
+  }
+}
+
+getAlertIcon(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return '✅';
+    case MessageType.Warning:
+      return '⚠️';
+    case MessageType.Info:
+      return 'ℹ️';
+    case MessageType.Error:
+      return '❌';
+    default:
+      return '🔔';
+  }
+}
 
   onBackClick() {
     this.router.navigate([this.sys.BankName + '/la']);

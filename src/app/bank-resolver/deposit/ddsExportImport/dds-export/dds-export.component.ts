@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
-import { SystemValues } from 'src/app/bank-resolver/Models';
+import { MessageType, ShowMessage, SystemValues } from 'src/app/bank-resolver/Models';
 import { ddsExport } from 'src/app/bank-resolver/Models/deposit/ddsExport';
 import { getExportData } from 'src/app/bank-resolver/Models/deposit/getExportData';
 import { RestService } from 'src/app/_service';
@@ -17,9 +17,9 @@ export class DdsExportComponent implements OnInit {
   sys = new SystemValues();
   config = { keyboard: false, backdrop: true, ignoreBackdropClick: true };
   exportEntryForm: FormGroup;
-  showAlert = false;
+  // showAlert = false;
   isLoading = false;
-  alertMsg = '';
+  showMsg: ShowMessage;
   selectTitle = true;
   fileUrl: any;
   getExportData: any;
@@ -86,8 +86,7 @@ export class DdsExportComponent implements OnInit {
     this.isLoading = true
     if (this.exportEntryForm.invalid) {
       this.isLoading = false;
-      this.showAlert = true;
-      this.alertMsg = 'Invalid Input.';
+      this.HandleMessage(true, MessageType.Error, 'Invalid Input.');
       return false;
     }
     else {
@@ -136,7 +135,7 @@ export class DdsExportComponent implements OnInit {
       this.modalRef.hide();
     }
   }
-  public closeAlert() { this.showAlert = false; }
+  
   closeScreen() { this.router.navigate([this.sys.BankName + '/la']); }
   exportFormat(e:any){
     this.mType=document.getElementById(e.target.id)
@@ -165,5 +164,46 @@ export class DdsExportComponent implements OnInit {
     }
     scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll to top
+    }
+      getAlertClass(type: MessageType): string {
+      switch (type) {
+        case MessageType.Sucess:
+          return 'alert-success';
+        case MessageType.Warning:
+          return 'alert-warning';
+        case MessageType.Info:
+          return 'alert-info';
+        case MessageType.Error:
+          return 'alert-danger';
+        default:
+          return 'alert-info';
+      }
+    }
+    private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
+      this.showMsg = new ShowMessage();
+      this.showMsg.Show = show;
+      this.showMsg.Type = type;
+      this.showMsg.Message = message;
+    
+      if (show) {
+        setTimeout(() => {
+          this.showMsg.Show = false;
+        }, 5000); // auto-close after 4 sec
+      }
+    }
+    
+    getAlertIcon(type: MessageType): string {
+      switch (type) {
+        case MessageType.Sucess:
+          return '✅';
+        case MessageType.Warning:
+          return '⚠️';
+        case MessageType.Info:
+          return 'ℹ️';
+        case MessageType.Error:
+          return '❌';
+        default:
+          return '🔔';
+      }
     }
 }

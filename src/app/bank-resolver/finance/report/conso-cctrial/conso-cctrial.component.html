@@ -61,20 +61,18 @@
         <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="closeScreen()">Close</button>
         <!-- <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="exportAsPDF()">Export as PDF</button> -->
         <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" [useExistingCss]="true"
-          printSectionId="mattable" ngxPrint>Print</button>
+      [printStyle]="{ '@page': { size: 'landscape !important' } }"
+        printSectionId="mattable" ngxPrint>Print</button>
         <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="onLoadScreen(content)">Retrieve</button>
         <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="downloadexcel()">Export as EXCEL</button>
   
       </div>
     </div>
     <!-- <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 shadow-lg mb-4 bg-white p-3"> -->
-    <div class="col-xs-12 col-sm-12 shadow-lg mb-4 bg-white p-3 mkScroll">
+    <!-- <div class="col-xs-12 col-sm-12 shadow-lg mb-4 bg-white p-3 mkScroll">
       
   
-      <!-- <mat-form-field appearance="outline">
-        <mat-label>Search Cash Cum Trial</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. abc/123" #input>
-      </mat-form-field> -->
+     
       <div class="mat-elevation-z8" class="row" id="mattable">
        
         <div class="col-12">
@@ -163,13 +161,176 @@
            </small> 
           </footer>
       </div>
-      <!-- <mat-paginator showFirstLastButtons [pageSizeOptions]="[5, 10, 25, 100, this.reportData.length]" aria-label="Select page of users"></mat-paginator> -->
+     
+      
+    </div> -->
+    <div class="col-xs-12 col-sm-12 shadow-lg mb-4 bg-white p-3 mkScroll">
+      
   
-      <!-- <pagination style="float:right;" [totalItems]="reportData?.length" [itemsPerPage]="itemsPerPage"
-        [boundaryLinks]="true" [directionLinks]="true" [maxSize]="5" [(ngModel)]="currentPage" name="currentPage"
-        (pageChanged)="pageChanged($event)" (pageBoundsCorrection)="pageChanged($event)"></pagination> -->
+      <div class="mat-elevation-z8" class="row" id="mattable">
+       
+        <div class="col-12">
+        <div class="justify-content-center" style="text-align:center">
+          <br><h4>{{ardbName}} ({{branchName}})</h4>
+          
+          <h4>Run Date & Time : {{today}} </h4>
+          <h4> <u>Consolidated Cash Cum Trial from {{fromdate.toDateString()| date: 'dd/MM/yyyy'}} to  {{todate.toDateString()| date: 'dd/MM/yyyy'}} </u></h4>
+       </div>
+      </div>
+    <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
+    <thead>
+    <tr>
+      <th colspan="6" style="text-align:center; font-size: 16px;">Liabilities and Income</th>
+      <th colspan="6" style="text-align:center; font-size: 16px;border-left: 3px solid;">Assets and Expense</th>
+    </tr>
+    <tr>
+      <!-- Left side headers -->
+      <th>Acc CD</th>
+      <th>Account Name</th>
+      <th style="text-align:right">Opening Credit</th>
+      <th style="text-align:right">Dr During Period</th>
+      <th style="text-align:right">Cr During Period</th>
+      <th style="text-align:right">Closing Credit</th>
+
+      <!-- Right side headers -->
+      <th style="border-left: 3px solid;">Acc CD</th>
+      <th>Account Name</th>
+      <th style="text-align:right">Opening Credit</th>
+      <th style="text-align:right">Dr During Period</th>
+      <th style="text-align:right">Cr During Period</th>
+      <th style="text-align:right">Closing Credit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let left of dataSource1; let i = index">
+      <!-- Left side row -->
+      <td>{{ left.acc_cd }}</td>
+      <td>{{ left.acc_name }}</td>
+      <td style="text-align:right">{{ left.opng_dr | currency:'INR' }}</td>
+      <td style="text-align:right">{{ left.dr | currency:'INR' }}</td>
+      <td style="text-align:right">{{ left.cr | currency:'INR' }}</td>
+      <td style="text-align:right">{{ left.clos_dr | currency:'INR' }}</td>
+
+      <!-- Right side row (may be undefined if shorter) -->
+      <ng-container *ngIf="dataSource2[i] as right; else emptyRight">
+        <td style="border-left: 3px solid;">{{ right.acc_cd }}</td>
+        <td>{{ right.acc_name }}</td>
+        <td style="text-align:right">{{ right.opng_dr | currency:'INR' }}</td>
+        <td style="text-align:right">{{ right.dr | currency:'INR' }}</td>
+        <td style="text-align:right">{{ right.cr | currency:'INR' }}</td>
+        <td style="text-align:right">{{ right.clos_dr | currency:'INR' }}</td>
+      </ng-container>
+      <ng-template #emptyRight>
+        <td colspan="6"></td>
+      </ng-template>
+    </tr>
+
+    <!-- Handle extra rows if dataSource2 is longer than dataSource1 -->
+    <tr *ngFor="let rightOnly of dataSource2.slice(dataSource1.length)">
+      <td colspan="6"></td>
+      <td style="border-left: 3px solid;">{{ rightOnly.acc_cd }}</td>
+      <td>{{ rightOnly.acc_name }}</td>
+      <td style="text-align:right">{{ rightOnly.opng_dr | currency:'INR' }}</td>
+      <td style="text-align:right">{{ rightOnly.dr | currency:'INR' }}</td>
+      <td style="text-align:right">{{ rightOnly.cr | currency:'INR' }}</td>
+      <td style="text-align:right">{{ rightOnly.clos_dr | currency:'INR' }}</td>
+    </tr>
+  
+
+    <tr>
+      <td colspan="2"><b>Total</b></td>
+      <td style="text-align:right"><b>{{ opdrSum1 | currency:'INR' }}</b></td>
+      <td style="text-align:right"><b>{{ drSum1 | currency:'INR' }}</b></td>
+      <td style="text-align:right"><b>{{ crSum1 | currency:'INR' }}</b></td>
+      <td style="text-align:right"><b>{{ clsdrSum1 | currency:'INR' }}</b></td>
+
+      <td style="border-left: 3px solid;" colspan="2"><b>Total</b></td>
+      <td style="text-align:right"><b>{{ opdrSum2 | currency:'INR' }}</b></td>
+      <td style="text-align:right"><b>{{ drSum2 | currency:'INR' }}</b></td>
+      <td style="text-align:right"><b>{{ crSum2 | currency:'INR' }}</b></td>
+      <td style="text-align:right"><b>{{ clsdrSum2 | currency:'INR' }}</b></td>
+    </tr>
+ </tbody>
+</table>
+
+      <!-- <div class="col-6" >
+        <table>
+          <thead>
+            <tr>
+              <th>Acc CD</th>
+              <th>Account Name</th>
+              <th style="text-align:right">Opening Credit</th>
+              <th style="text-align:right">Dr During Period</th>
+              <th style="text-align:right">Cr During Period</th>
+               <th style="text-align:right">Closing Credit</th>
+            </tr>
+          </thead>
+          
+          <tbody *ngFor="let row of dataSource1; let i=index;"> 
+            <tr>
+              <td>{{row.acc_cd}}</td>
+              <td>{{row.acc_name}}</td>
+              <td style="text-align: right;">{{row.opng_dr| currency:"INR"}}</td>
+              <td style="text-align: right;">{{row.dr| currency:"INR"}} </td>
+              <td style="text-align: right;">{{row.cr| currency:"INR"}} </td>
+              <td style="text-align: right;">{{row.clos_dr| currency:"INR"}}</td>
+            </tr>
+          </tbody>
+           <tfoot>
+            <tr>
+              <td colspan="2" ><b>Total</b></td>
+              <td style="text-align: right;"><b>{{opdrSum1| currency:"INR"}}</b></td>
+              <td style="text-align: right;"><b>{{drSum1| currency:"INR"}}</b> </td>
+              <td style="text-align: right;"><b>{{crSum1| currency:"INR"}}</b> </td>
+              <td style="text-align: right;"><b>{{clsdrSum1| currency:"INR"}}</b></td>
+
+            </tr>
+           </tfoot>
+          </table>
+      </div>
       
-      
+        
+        <div class="col-6">
+        <table >
+          <thead>
+            <tr>
+              <th>Acc CD</th>
+              <th>Account Name</th>
+              <th style="text-align:right">Opening Credit</th>
+              <th style="text-align:right">Dr During Period</th>
+              <th style="text-align:right">Cr During Period</th>
+               <th style="text-align:right">Closing Credit</th>
+            </tr>
+          </thead>
+          
+          <tbody *ngFor="let row of dataSource2; let i=index;"> 
+            <tr>
+              <td>{{row.acc_cd}}</td>
+              <td>{{row.acc_name}}</td>
+              <td style="text-align: right;">{{row.opng_dr| currency:"INR"}}</td>
+              <td style="text-align: right;">{{row.dr| currency:"INR"}} </td>
+              <td style="text-align: right;">{{row.cr| currency:"INR"}} </td>
+              <td style="text-align: right;">{{row.clos_dr| currency:"INR"}}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" ><b>Total</b></td>
+              <td style="text-align: right;"><b>{{opdrSum2| currency:"INR"}}</b></td>
+              <td style="text-align: right;"><b>{{drSum2| currency:"INR"}}</b> </td>
+              <td style="text-align: right;"><b>{{crSum2| currency:"INR"}}</b> </td>
+              <td style="text-align: right;"><b>{{clsdrSum2| currency:"INR"}}</b></td>
+            </tr>
+           </tfoot>
+            
+          </table>
+          </div> -->
+        <footer>
+          <small>
+            This report is generated through CFS-2022
+           </small> 
+          </footer>
+      </div>
     </div>
     <!-- <div  class="col-xs-12 col-sm-12 col-md-8 col-lg-8 shadow-lg mb-4 bg-white p-3">
        <div style="text-align: center;"><strong> Synergic Banking </strong>  </div>
@@ -189,7 +350,7 @@
         <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="closeScreen()">Close</button>
         <!-- <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="exportAsPDF()">Export as PDF</button> -->
         <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" [useExistingCss]="true"
-          printSectionId="mattable" ngxPrint>Print</button>
+          [printStyle]="{ '@page': { size: 'landscape !important' } }" printSectionId="mattable" ngxPrint>Print</button>
         <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="onLoadScreen(content)">Retrieve</button>
         <button mat-raised-button type="button" class="btn btn-rounded btn-primary m-1" (click)="downloadexcel()">Export as EXCEL</button>
   

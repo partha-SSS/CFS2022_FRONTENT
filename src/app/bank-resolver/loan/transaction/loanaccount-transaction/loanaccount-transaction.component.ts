@@ -3686,12 +3686,7 @@ this.out_ovd_intt=0;
       if(this.td.ongoing_unit_no.value > 0){
       }
       else{
-        if((+tdDefTransTrnsfr.amount)!=this.tdDefTransFrm.controls.amount.value && this.isRecovery){
-        this.HandleMessage(true, MessageType.Error, 'Entered amount does not match with recovery amount..!!');
-        tdDefTransTrnsfr.amount = 0;
-        this.TrfTotAmt=0;
-        return;
-    }}
+        }
       
   }
     if(tdDefTransTrnsfr.cust_acc_number){
@@ -3786,15 +3781,47 @@ this.out_ovd_intt=0;
     const temp_deftranstrf = new td_def_trans_trf();
     this.td_deftranstrfList.push(temp_deftranstrf);
   }
-  private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
-    this.showMsg = new ShowMessage();
-    this.showMsg.Show = show;
-    this.showMsg.Type = type;
-    this.showMsg.Message = message;
-    // setTimeout(() => {
-    //   this.showMsg = new ShowMessage();
-    // }, 3000);
+  getAlertClass(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return 'alert-success';
+    case MessageType.Warning:
+      return 'alert-warning';
+    case MessageType.Info:
+      return 'alert-info';
+    case MessageType.Error:
+      return 'alert-danger';
+    default:
+      return 'alert-info';
   }
+}
+private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
+  this.showMsg = new ShowMessage();
+  this.showMsg.Show = show;
+  this.showMsg.Type = type;
+  this.showMsg.Message = message;
+
+  // if (show) {
+  //   setTimeout(() => {
+  //     this.showMsg.Show = false;
+  //   }, 5000); // auto-close after 4 sec
+  // }
+}
+
+getAlertIcon(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return '✅';
+    case MessageType.Warning:
+      return '⚠️';
+    case MessageType.Info:
+      return 'ℹ️';
+    case MessageType.Error:
+      return '❌';
+    default:
+      return '🔔';
+  }
+}
 
   onBackClick() {
     this.router.navigate([this.sys.BankName + '/la']);

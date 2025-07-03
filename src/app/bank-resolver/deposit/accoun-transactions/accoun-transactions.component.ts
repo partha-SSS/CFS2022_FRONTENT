@@ -1375,21 +1375,18 @@ getjoinholder(){
           this.HandleMessage(true, MessageType.Warning,
             `Account for ${custName} does not have full KYC completed.`);
         }
-        // Check both are valid
-        else if (aadhar.length > 5 && pan.length > 5) {
-          this.HandleMessage(true, MessageType.Sucess,
-            `Account for ${custName} has successfully completed full KYC.`);
-        }
-        // Aadhar valid, PAN invalid
-        else if (aadhar.length > 5 && pan.length < 5) {
-          this.HandleMessage(true, MessageType.Warning,
-            `Account for ${custName} has Aadhar uploaded but PAN not verified.`);
-        }
-        // PAN valid, Aadhar invalid
-        else if (aadhar.length < 5 && pan.length > 5) {
-          this.HandleMessage(true, MessageType.Warning,
-            `Account for ${custName} has PAN uploaded but Aadhar not verified.`);
-        }
+        // else if (aadhar.length > 5 && pan.length > 5) {
+        //   this.HandleMessage(true, MessageType.Sucess,
+        //     `Account for ${custName} has successfully completed full KYC.`);
+        // }
+        // else if (aadhar.length > 5 && pan.length < 5) {
+        //   this.HandleMessage(true, MessageType.Warning,
+        //     `Account for ${custName} has Aadhar uploaded but PAN not verified.`);
+        // }
+        // else if (aadhar.length < 5 && pan.length > 5) {
+        //   this.HandleMessage(true, MessageType.Warning,
+        //     `Account for ${custName} has PAN uploaded but Aadhar not verified.`);
+        // }
 
         debugger
       },
@@ -5088,6 +5085,15 @@ debugger
         return;
       }
     }
+     if ((accTypeCd == 1 || accTypeCd == 7 || accTypeCd == 8 || accTypeCd == 9 || accTypeCd == 11 || accTypeCd == 10)&&(this.td.trf_type.value === 'C') ) {
+      console.log(this.tdDefTransFrm.controls.amount.value,this.accDtlsFrm.controls.clr_bal.value);
+      
+      if((this.tdDefTransFrm.controls.amount.value>this.accDtlsFrm.controls.clr_bal.value) && this.tdDefTransFrm.controls.trans_type_key.value == 'W'){
+        this.HandleMessage(true, MessageType.Error, 'Amount can not be greater than clear balance');
+      return;
+      }
+      
+    }
     if((accTypeCd == 2 || accTypeCd == 3|| accTypeCd == 4 || accTypeCd == 5) && this.showBalance && this.td.trf_type.value === 'T' && selectedOperation2.oprn_desc.toLocaleLowerCase() == 'renewal'){
       if(this.td.balance.value!=this.TrfTotAmt){
         this.HandleMessage(true, MessageType.Error, 'Balance amount dose not match with transfer amount..');
@@ -5122,6 +5128,7 @@ debugger
       this.HandleMessage(true, MessageType.Error, 'Amount can not be blank');
       return;
     }
+   
     else if (this.td.trf_type.value === 'T' && (this.TrfTotAmt==0||this.TrfTotAmt==null||this.TrfTotAmt==undefined)&& (accTypeCd==1||accTypeCd==8)){
       this.HandleMessage(true, MessageType.Error, 'Please select correct Transaction  type or put Transaction  value');
       return;
@@ -6954,15 +6961,15 @@ debugger
     this.td_deftranstrfList.push(temp_deftranstrf);
   }
 
-  private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
-    this.showMsg = new ShowMessage();
-    this.showMsg.Show = show;
-    this.showMsg.Type = type;
-    this.showMsg.Message = message;
-    // setTimeout(() => {
-    //   this.showMsg = new ShowMessage();
-    // }, 3000);
-  }
+  // private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
+  //   this.showMsg = new ShowMessage();
+  //   this.showMsg.Show = show;
+  //   this.showMsg.Type = type;
+  //   this.showMsg.Message = message;
+  //   // setTimeout(() => {
+  //   //   this.showMsg = new ShowMessage();
+  //   // }, 3000);
+  // }
   // ngAfterViewInit() {
   //   if(this.f.acct_num.value.length>0)
   //   {
@@ -7044,6 +7051,47 @@ debugger
     else{this.new_acc_status=false}
     
   }
+  getAlertClass(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return 'alert-success';
+    case MessageType.Warning:
+      return 'alert-warning';
+    case MessageType.Info:
+      return 'alert-info';
+    case MessageType.Error:
+      return 'alert-danger';
+    default:
+      return 'alert-info';
+  }
+}
+private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
+  this.showMsg = new ShowMessage();
+  this.showMsg.Show = show;
+  this.showMsg.Type = type;
+  this.showMsg.Message = message;
+
+  // if (show) {
+  //   setTimeout(() => {
+  //     this.showMsg.Show = false;
+  //   }, 5000); // auto-close after 4 sec
+  // }
+}
+
+getAlertIcon(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return '✅';
+    case MessageType.Warning:
+      return '⚠️';
+    case MessageType.Info:
+      return 'ℹ️';
+    case MessageType.Error:
+      return '❌';
+    default:
+      return '🔔';
+  }
+}
 
   
 }

@@ -903,7 +903,7 @@ select{
   margin-left:30px
 } 
 
-.alert-danger{
+/* .alert-danger{
   background-color: #772c2c !important;
   color: white !important;
 }
@@ -921,7 +921,7 @@ select{
 .alert-info{
   color:white !important;
   background-color: #5b8991 !important;
-}
+} */
 .input-group-append{
   height: 36px!important;
 }
@@ -935,3 +935,106 @@ select{
   z-index:9000 !important; 
 }
 /*  */
+/* Common Alert Styling */
+/* .alert {
+  border-radius: 10px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: none;
+  padding: 1rem 1.5rem;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease-in-out;
+}
+
+.alert-dismissible .close {
+  color: white;
+  opacity: 0.9;
+  font-size: 1.3rem;
+}
+.alert-dismissible .close:hover {
+  opacity: 1;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: #fff !important;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #e53935, #b71c1c);
+  color: #fff !important;
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, #fdd835, #f9a825);
+  color: #212121 !important;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, #29b6f6, #0288d1);
+  color: #fff !important;
+}
+
+.alert:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+} */
+ .custom-alert-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 340px;
+  max-width: 80%;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  color: white;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 1050;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* Popup animation */
+.animate-popup {
+  animation: fadeScale 0.4s ease-in-out;
+}
+
+@keyframes fadeScale {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Icons */
+.alert-icon {
+  font-size: 1.5rem;
+}
+
+/* Alert type colors */
+.alert-success {
+  background: linear-gradient(135deg, #54b857, #0dad15);
+}
+
+.alert-info {
+  background: linear-gradient(135deg, #55a5ca, #1f8eca);
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, #d6bc46, #da8e15);
+  color: #212121;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #c95250, #ca1f1f);
+}

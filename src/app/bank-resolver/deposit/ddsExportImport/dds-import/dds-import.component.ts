@@ -17,9 +17,9 @@ export class DdsImportComponent implements OnInit {
   sys = new SystemValues();
   config = { keyboard: false, backdrop: true, ignoreBackdropClick: true };
   importEntryForm: FormGroup;
-  showAlert = false;
+  // showAlert = false;
   isLoading = false;
-  alertMsg = '';
+  // alertMsg = '';
   getImportData: any;;
   agentCD: any;
   agentData: any;
@@ -79,34 +79,33 @@ export class DdsImportComponent implements OnInit {
             this.isLoading = false;
             console.log(data,response);
             if (!data && !response) {
-              this.alertMsg = "Imported successfully!!";
-              this.showAlert = true;
+               this.HandleMessage(true, MessageType.Sucess, ' Successfully Imported' );
+              // this.alertMsg = "Imported successfully!!";
+              // this.showAlert = true;
               this.flag = 1
             }
             else {
-              this.alertMsg = "Import unsuccessful!!";
-              this.showAlert = true;
+               this.HandleMessage(true, MessageType.Error, 'Import Failed' );
+
               this.flag = 0
             }
 
           }, error => {
-            this.alertMsg = "Import Failed, error from server side!!";
-            this.showAlert = true;
-            this.flag = 0
+               this.HandleMessage(true, MessageType.Error, 'Import Failed, error from server side!!' );
+                this.flag = 0
           })
 
         })
       }
       else {
-        this.isLoading = false;
-        this.alertMsg = "The data for this agent has already been imported.";
-        this.showAlert = true;
-        this.flag = 0
+              this.isLoading = false;
+               this.HandleMessage(true, MessageType.Warning, 'The data for this agent has already been imported.' );
+                this.flag = 0
       }
     }, error => {
       this.isLoading = false;
-      this.alertMsg = "Error in importing!";
-      this.showAlert = true;
+               this.HandleMessage(true, MessageType.Error, 'Error in importing!' );
+
       this.flag = 0
     })
 
@@ -118,8 +117,8 @@ export class DdsImportComponent implements OnInit {
     this.btnForImport.click()
     if (this.importEntryForm.invalid) {
       this.isLoading = false;
-      this.showAlert = true;
-      this.alertMsg = 'Invalid Input.';
+       this.HandleMessage(true, MessageType.Error, 'Invalid Input' );
+
       return false;
     }
     else {
@@ -133,7 +132,6 @@ export class DdsImportComponent implements OnInit {
       this.modalRef.hide();
     }
   }
-  public closeAlert() { this.showAlert = false; }
   closeScreen() { this.router.navigate([this.sys.BankName + '/la']); }
   showFile(e: any) {
     console.log(e.target.files[0].name);
@@ -158,17 +156,47 @@ export class DdsImportComponent implements OnInit {
     };
     reader.readAsText(input.files[0]);
   }
-  private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
-    this.showMsg = new ShowMessage();
-    this.showMsg.Show = show;
-    this.showMsg.Type = type;
-    this.showMsg.Message = message;
-    // this.disableAll = true; this.disableAccountTypeAndNo = true;
-    // On below for dissapearing message
-    // setTimeout(() => {
-    //   this.showMsg = new ShowMessage();
-    // }, 3000);
+    getAlertClass(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return 'alert-success';
+    case MessageType.Warning:
+      return 'alert-warning';
+    case MessageType.Info:
+      return 'alert-info';
+    case MessageType.Error:
+      return 'alert-danger';
+    default:
+      return 'alert-info';
   }
+}
+private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
+  this.showMsg = new ShowMessage();
+  this.showMsg.Show = show;
+  this.showMsg.Type = type;
+  this.showMsg.Message = message;
+
+  if (show) {
+    setTimeout(() => {
+      this.showMsg.Show = false;
+    }, 5000); // auto-close after 4 sec
+  }
+}
+
+getAlertIcon(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return '✅';
+    case MessageType.Warning:
+      return '⚠️';
+    case MessageType.Info:
+      return 'ℹ️';
+    case MessageType.Error:
+      return '❌';
+    default:
+      return '🔔';
+  }
+}
   selectAgent(agent_cd:any){
     this.importEntryForm.controls.agent_id.setValue(agent_cd);
     this.showHideAgent=false

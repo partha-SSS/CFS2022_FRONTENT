@@ -16,6 +16,8 @@ import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import { CommonServiceService } from 'src/app/bank-resolver/common-service.service';
+import html2canvas from 'html2canvas';
+import jspdf from 'jspdf';
 
 @Component({
   selector: 'app-cashcumtrial',
@@ -24,9 +26,12 @@ import { CommonServiceService } from 'src/app/bank-resolver/common-service.servi
   providers:[ExportAsService]
 
 })
-export class CashcumtrialComponent implements OnInit,AfterViewInit {
-  displayedColumns: string[] = ['acc_cd', 'acc_name', 'opng_dr', 'opng_cr', 'dr', 'cr', 'clos_dr', 'clos_cr'];
-  dataSource=new MatTableDataSource();
+export class CashcumtrialComponent implements OnInit {
+  // displayedColumns: string[] = ['acc_cd', 'acc_name', 'opng_dr', 'dr', 'cr', 'clos_dr'];
+  dataSource:any[]=[];
+  dataSource1:any[]=[];
+  dataSource2:any[]=[];
+
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -47,7 +52,7 @@ export class CashcumtrialComponent implements OnInit,AfterViewInit {
   showReport = false;
   showAlert = false;
   isLoading = false;
-  ReportUrl: SafeResourceUrl;
+  // ReportUrl: SafeResourceUrl;
   UrlString = '';
   alertMsg = '';
   fd: any;
@@ -62,9 +67,18 @@ export class CashcumtrialComponent implements OnInit,AfterViewInit {
   currentPage = 1;
   pagedItems = [];
   reportData:any=[]
+  reportData1:any=[]
+  reportData2:any=[]
   ardbName=localStorage.getItem('ardb_name')
   branchName=this.sys.BranchName
-
+  opdrSum1=0
+  crSum1=0
+  drSum1=0
+  clsdrSum1=0
+  opdrSum2=0
+  crSum2=0
+  drSum2=0
+  clsdrSum2=0
   pageChange: any;
   opdrSum=0;
   opcrSum=0;
@@ -141,8 +155,6 @@ export class CashcumtrialComponent implements OnInit,AfterViewInit {
     }
     else {
       this.modalRef.hide()
-      this.reportData.length=0;
-      this.pagedItems.length=0;
       this.showAlert = false;
       this.opdrSum=0;
       this.opcrSum=0;
@@ -176,27 +188,37 @@ export class CashcumtrialComponent implements OnInit,AfterViewInit {
           this.clscrSumFour=0;
       this.fromdate=this.reportcriteria.value['fromDate'];
       this.todate=this.reportcriteria.value['toDate'];
-      //this.isLoading=true;
-      //this.onReportComplete();
-      // this.modalService.dismissAll(this.content);
       var dt={
         "ardb_cd":this.sys.ardbCD,
         "brn_cd":this.sys.BranchCode,
         "from_dt":this.fromdate.toISOString(),
         "to_dt":this.todate.toISOString()
       }
-      this.svc.addUpdDel('Finance/PopulateCashCumTrial',dt).subscribe(data=>{console.log(data)
+      this.svc.addUpdDel('Finance/PopulateCashCumTrialBrn',dt).subscribe(data=>{console.log(data)
       this.reportData=data
       this.dataSource=this.reportData
       if(!this.reportData){
         this.comSer.SnackBar_Nodata()
           this.isLoading=false
+      }
+      else{
+        this.reportData1=this.reportData.filter(a=>a.acc_type=='L')
+        this.reportData1.forEach(e=>{
+        this.opdrSum1+=e.opng_dr;
+        this.crSum1+=e.cr;
+        this.drSum1+=e.dr;
+        this.clsdrSum1+=e.clos_dr;})
+        this.dataSource1= this.reportData1
+
+        this.reportData2=this.reportData.filter(a=>a.acc_type=='A')
+        this.reportData2.forEach(e=>{
+          this.opdrSum2+=e.opng_dr;
+          this.crSum2+=e.cr;
+          this.drSum2+=e.dr;
+          this.clsdrSum2+=e.clos_dr;})
+          this.dataSource2= this.reportData2
       } 
       this.isLoading=false
-      // this.pageChange=document.getElementById('chngPage');
-      // this.pageChange.click()
-      // this.setPage(2);
-      // this.setPage(1)
       this.modalRef.hide();
       this.reportData.forEach(e=>{
         this.opdrSum+=e.opng_dr;
@@ -205,65 +227,57 @@ export class CashcumtrialComponent implements OnInit,AfterViewInit {
         this.drSum+=e.dr;
         this.clsdrSum+=e.clos_dr;
         this.clscrSum+=e.clos_cr;
-        // console.log(e.acc_cd.toString().charAt(0))
-      //   if(e.acc_cd.toString().charAt(0)=='1')
-      //   {
-      //     this.lastOne=e.acc_cd
-      //     this.opdrSumOne+=e.opng_dr;
-      //     this.opcrSumOne+=e.opng_cr;
-      //     this.crSumOne+=e.cr;
-      //     this.drSumOne+=e.dr;
-      //     this.clsdrSumOne+=e.clos_dr;
-      //     this.clscrSumOne+=e.clos_cr;
-      //   }
-      //   if(e.acc_cd.toString().charAt(0)=='2')
-      //   {
-      //     this.lastTwo=e.acc_cd
-      //     this.opdrSumTwo+=e.opng_dr;
-      //     this.opcrSumTwo+=e.opng_cr;
-      //     this.crSumTwo+=e.cr;
-      //     this.drSumTwo+=e.dr;
-      //     this.clsdrSumTwo+=e.clos_dr;
-      //     this.clscrSumTwo+=e.clos_cr;
-      //   }
-      //   if(e.acc_cd.toString().charAt(0)=='3')
-      //   {
-      //     this.lastThree=e.acc_cd
-      //     this.opdrSumThree+=e.opng_dr;
-      //     this.opcrSumThree+=e.opng_cr;
-      //     this.crSumThree+=e.cr;
-      //     this.drSumThree+=e.dr;
-      //     this.clsdrSumThree+=e.clos_dr;
-      //     this.clscrSumThree+=e.clos_cr;
-      //   }
-      //   if(e.acc_cd.toString().charAt(0)=='4')
-      //   {
-      //     this.lastFour=e.acc_cd
-      //     this.opdrSumFour+=e.opng_dr;
-      //     this.opcrSumFour+=e.opng_cr;
-      //     this.crSumFour+=e.cr;
-      //     this.drSumFour+=e.dr;
-      //     this.clsdrSumFour+=e.clos_dr;
-      //     this.clscrSumFour+=e.clos_cr;
-      //   }
-      //    console.log(this.lastOne+" "+this.lastTwo+" "+this.lastThree+" "+this.lastFour)
+        if(e.acc_cd.toString().charAt(0)=='1')
+        {
+          this.lastOne=e.acc_cd
+          this.opdrSumOne+=e.opng_dr;
+          this.opcrSumOne+=e.opng_cr;
+          this.crSumOne+=e.cr;
+          this.drSumOne+=e.dr;
+          this.clsdrSumOne+=e.clos_dr;
+          this.clscrSumOne+=e.clos_cr;
+        }
+        if(e.acc_cd.toString().charAt(0)=='2')
+        {
+          this.lastTwo=e.acc_cd
+          this.opdrSumTwo+=e.opng_dr;
+          this.opcrSumTwo+=e.opng_cr;
+          this.crSumTwo+=e.cr;
+          this.drSumTwo+=e.dr;
+          this.clsdrSumTwo+=e.clos_dr;
+          this.clscrSumTwo+=e.clos_cr;
+        }
+        if(e.acc_cd.toString().charAt(0)=='3')
+        {
+          this.lastThree=e.acc_cd
+          this.opdrSumThree+=e.opng_dr;
+          this.opcrSumThree+=e.opng_cr;
+          this.crSumThree+=e.cr;
+          this.drSumThree+=e.dr;
+          this.clsdrSumThree+=e.clos_dr;
+          this.clscrSumThree+=e.clos_cr;
+        }
+        if(e.acc_cd.toString().charAt(0)=='4')
+        {
+          this.lastFour=e.acc_cd
+          this.opdrSumFour+=e.opng_dr;
+          this.opcrSumFour+=e.opng_cr;
+          this.crSumFour+=e.cr;
+          this.drSumFour+=e.dr;
+          this.clsdrSumFour+=e.clos_dr;
+          this.clscrSumFour+=e.clos_cr;
+        }
+         console.log(this.lastOne+" "+this.lastTwo+" "+this.lastThree+" "+this.lastFour)
       })
-      // this.lastAccCD=this.reportData[this.reportData.length-1].acc_cd
+      this.lastAccCD=this.reportData[this.reportData.length-1].acc_cd
       },
       err => {
          this.isLoading = false;
          this.comSer.SnackBar_Error(); 
         })
       
-      // this.UrlString=this.svc.getReportUrl()
-      // this.UrlString=this.UrlString+"WebForm/Fin/cashcumtrail?" + 'ardb_cd=' + this.sys.ardbCD+"&brn_cd="+this.sys.BranchCode+"&from_dt="+Utils.convertDtToString(this.fromdate)+"&to_dt="+Utils.convertDtToString(this.todate)
-      ;
       this.isLoading = true;
-      this.ReportUrl=this._domSanitizer.bypassSecurityTrustResourceUrl(this.UrlString)
-
-      // setTimeout(() => {
-      //   this.isLoading = false;
-      // }, 10000);
+    
     }
   }
   public oniframeLoad(): void {
@@ -280,7 +294,9 @@ export class CashcumtrialComponent implements OnInit,AfterViewInit {
   public closeAlert() {
     this.showAlert = false;
   }
-  
+  //private pdfmake : pdfMake;
+ 
+
 
 closeScreen()
 {
@@ -300,23 +316,47 @@ downloadexcel(){
     // elementId: 'hiddenTab', 
     elementIdOrContent:'mattable'
   }
-  this.exportAsService.save(this.exportAsConfig, 'CashCumTrial').subscribe(() => {
+  this.exportAsService.save(this.exportAsConfig, 'ConsoTrial').subscribe(() => {
     // save started
     console.log("hello")
   });
 }
-ngAfterViewInit() {
-  this.dataSource.paginator = this.paginator;
-  this.dataSource.sort = this.sort;
+exportAsPDF() {
+  const elementToPrint = document.getElementById('mattable'); // replace 'mattable' with the ID of your HTML div
+  html2canvas(elementToPrint).then((canvas) => {
+    const contentDataURL = canvas.toDataURL('image/png');
+    const pdf = new jspdf('landscape', 'px', 'a4');
+    const imgWidth = 610;
+    const pageHeight = 250;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+    pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+    let pageCount = 1;
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight-150;
+      pdf.addPage();
+      pdf.addImage(contentDataURL, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight+100; // add the gap height to the page height
+      pageCount++;
+    }
+    pdf.save('cashcumtrial.pdf'); // replace 'cashcumtrial' with the desired filename
+  });
 }
+// ngAfterViewInit() {
+//   this.dataSource.paginator = this.paginator;
+//   this.dataSource.sort = this.sort;
+// }
 
-applyFilter(event: Event) {
-  const filterValue = (event.target as HTMLInputElement).value;
-  this.dataSource.filter = filterValue.trim().toLowerCase();
+// applyFilter(event: Event) {
+//   const filterValue = (event.target as HTMLInputElement).value;
+//   this.dataSource.filter = filterValue.trim().toLowerCase();
 
-  if (this.dataSource.paginator) {
-    this.dataSource.paginator.firstPage();
-  }
-}
+//   if (this.dataSource.paginator) {
+//     this.dataSource.paginator.firstPage();
+//   }
+// }
+
 
 }

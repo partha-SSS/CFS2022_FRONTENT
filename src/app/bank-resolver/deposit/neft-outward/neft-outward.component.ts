@@ -457,47 +457,47 @@ export class NeftOutwardComponent implements OnInit {
       this.clearData()
       return;
     }
-    if (this.neftPayRet.payment_type == null || this.neftPayRet.payment_type === 'undefined') {
+    if (!this.neftPayRet.payment_type) {
       this.HandleMessage(true, MessageType.Error, 'Payment Type Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.bene_name == null || this.neftPayRet.bene_name === 'undefined') {
+    else if (!this.neftPayRet.bene_name) {
       this.HandleMessage(true, MessageType.Error, 'Beneficiary Name Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.amount == null || this.neftPayRet.amount == 0) {
+    else if (!this.neftPayRet.amount) {
       this.HandleMessage(true, MessageType.Error, 'Amount Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.date_of_payment == null) {
+    else if (!this.neftPayRet.date_of_payment) {
       this.HandleMessage(true, MessageType.Error, 'Date of Payment Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.bene_acc_no == null || this.neftPayRet.bene_acc_no === 'undefined') {
+    else if (!this.neftPayRet.bene_acc_no) {
       this.HandleMessage(true, MessageType.Error, 'Beneficiary Account No. Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.bene_ifsc_code == null || this.neftPayRet.bene_ifsc_code === 'undefined') {
+    else if (!this.neftPayRet.bene_ifsc_code) {
       this.HandleMessage(true, MessageType.Error, 'Beneficiary IFSC Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.dr_acc_no == null || this.neftPayRet.dr_acc_no == 0) {
+    else if (!this.neftPayRet.dr_acc_no ) {
       this.HandleMessage(true, MessageType.Error, 'Dr. A/C No Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.bank_dr_acc_type == null || this.neftPayRet.bank_dr_acc_type === 0) {
+    else if (!this.neftPayRet.bank_dr_acc_type) {
       this.HandleMessage(true, MessageType.Error, 'Beneficiary A/C Type Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.bank_dr_acc_no == null || this.neftPayRet.bank_dr_acc_no === 'undefined') {
+    else if (!this.neftPayRet.bank_dr_acc_no) {
       this.HandleMessage(true, MessageType.Error, 'Bank Dr. A/C No Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.bank_dr_acc_name == null || this.neftPayRet.bank_dr_acc_name === 'undefined') {
+    else if (!this.neftPayRet.bank_dr_acc_name) {
       this.HandleMessage(true, MessageType.Error, 'Bank Dr. A/C name Can not be Blank');
       return;
     }
-    else if (this.neftPayRet.credit_narration == null || this.neftPayRet.credit_narration === 'undefined') {
+    else if (!this.neftPayRet.credit_narration) {
       this.HandleMessage(true, MessageType.Error, 'Credit Narration Can not be Blank');
       return;
     }
@@ -613,12 +613,47 @@ debugger;
   backScreen() {
     this.router.navigate([this.sys.BankName + '/la']);
   }
-  private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
-    this.showMsg = new ShowMessage();
-    this.showMsg.Show = show;
-    this.showMsg.Type = type;
-    this.showMsg.Message = message;
+  getAlertClass(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return 'alert-success';
+    case MessageType.Warning:
+      return 'alert-warning';
+    case MessageType.Info:
+      return 'alert-info';
+    case MessageType.Error:
+      return 'alert-danger';
+    default:
+      return 'alert-info';
   }
+}
+private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
+  this.showMsg = new ShowMessage();
+  this.showMsg.Show = show;
+  this.showMsg.Type = type;
+  this.showMsg.Message = message;
+
+  if (show) {
+    setTimeout(() => {
+      this.showMsg.Show = false;
+    }, 5000); // auto-close after 4 sec
+  }
+}
+
+getAlertIcon(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return '✅';
+    case MessageType.Warning:
+      return '⚠️';
+    case MessageType.Info:
+      return 'ℹ️';
+    case MessageType.Error:
+      return '❌';
+    default:
+      return '🔔';
+  }
+}
 
   checkAndSetDebitAccType(tfrType: string) {
     this.HandleMessage(false);

@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { mm_acc_type, SystemValues, tm_deposit, tm_depositall } from 'src/app/bank-resolver/Models';
+import { MessageType, mm_acc_type, ShowMessage, SystemValues, tm_deposit, tm_depositall } from 'src/app/bank-resolver/Models';
 import { p_gen_param } from 'src/app/bank-resolver/Models/p_gen_param';
 import { RestService } from 'src/app/_service/rest.service';
 
@@ -20,6 +20,7 @@ export class LienAccLockUnlockComponent implements OnInit {
     ) {   }
     alertMsgType: string;
     alertMsg: string;
+    showMsg:ShowMessage
     disabledAll = false;
     showAlert = false;
     isLoading = false;
@@ -135,7 +136,8 @@ export class LienAccLockUnlockComponent implements OnInit {
 
         if (tmDepositAll == undefined || tmDepositAll == null || tmDepositAll.length == 0)
         {
-          this.showAlertMsg('WARNING' , 'Account Details not found !!');
+          this.HandleMessage(true, MessageType.Warning, 'Account Details not found !');
+
         }
         else
         {
@@ -150,7 +152,9 @@ export class LienAccLockUnlockComponent implements OnInit {
       err => {
         //debugger;
         this.isLoading = false;
-        this.showAlertMsg('WARNING' , 'Account Details not found !!');
+          this.HandleMessage(true, MessageType.Warning, 'Account Details not found !');
+
+        // this.showAlertMsg('WARNING' , 'Account Details not found !!');
       }
     );
   }
@@ -200,7 +204,9 @@ export class LienAccLockUnlockComponent implements OnInit {
       
       if ( this.operationType !== 'Q')
       {
-        this.showAlertMsg('WARNING' , 'Record not retrieved to modify');
+        // this.showAlertMsg('WARNING' , 'Record not retrieved to modify');
+          this.HandleMessage(true, MessageType.Warning, 'Record not retrieved to modify');
+
         return;
       }
       this.operationType = 'U';
@@ -211,14 +217,18 @@ export class LienAccLockUnlockComponent implements OnInit {
   saveData() {
     this.isLoading=true;
     if (this.operationType !== 'U') {
-      this.isLoading=false
-      this.showAlertMsg('WARNING', 'Record not updated to save');
+      this.isLoading=false;
+          this.HandleMessage(true, MessageType.Warning, 'Record not updated to save');
+
+      // this.showAlertMsg('WARNING', 'Record not updated to save');
       return;
     }
     else {
       if(this.sys.BranchCode!=this.tm_depositall.brn_cd){
         this.isLoading=false
-        this.showAlertMsg('WARNING', 'Only the home branch performed the lock-unlock process.');
+          this.HandleMessage(true, MessageType.Warning, 'Only the home branch performed the lock-unlock process');
+
+        // this.showAlertMsg('WARNING', 'Only the home branch performed the lock-unlock process.');
         return;
       }
       // //debugger;
@@ -237,12 +247,13 @@ export class LienAccLockUnlockComponent implements OnInit {
           ret = res;
 
           if (ret == 0) {
-            this.showAlertMsg('SUCCESS', 'Record saved successfully !!');
+          this.HandleMessage(true, MessageType.Sucess, 'Record saved successfull');
+
 
           }
           else
           {
-            this.showAlertMsg('WARNING', 'Record not saved !!');
+          this.HandleMessage(true, MessageType.Error, 'Record not saved !!');
           }
 
           this.isLoading = false;
@@ -250,7 +261,9 @@ export class LienAccLockUnlockComponent implements OnInit {
         err => {
           //debugger;
           this.isLoading = false;
-          this.showAlertMsg('WARNING', 'Record not saved !!');
+          this.HandleMessage(true, MessageType.Error, 'Record not saved !!');
+
+          // this.showAlertMsg('WARNING', 'Record not saved !!');
         }
       );
     }
@@ -260,6 +273,47 @@ export class LienAccLockUnlockComponent implements OnInit {
 
     backScreen() {
       this.router.navigate([this.sys.BankName + '/la']);
+    }
+     getAlertClass(type: MessageType): string {
+      switch (type) {
+        case MessageType.Sucess:
+          return 'alert-success';
+        case MessageType.Warning:
+          return 'alert-warning';
+        case MessageType.Info:
+          return 'alert-info';
+        case MessageType.Error:
+          return 'alert-danger';
+        default:
+          return 'alert-info';
+      }
+    }
+    private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
+      this.showMsg = new ShowMessage();
+      this.showMsg.Show = show;
+      this.showMsg.Type = type;
+      this.showMsg.Message = message;
+    
+      if (show) {
+        setTimeout(() => {
+          this.showMsg.Show = false;
+        }, 5000); // auto-close after 4 sec
+      }
+    }
+    
+    getAlertIcon(type: MessageType): string {
+      switch (type) {
+        case MessageType.Sucess:
+          return '✅';
+        case MessageType.Warning:
+          return '⚠️';
+        case MessageType.Info:
+          return 'ℹ️';
+        case MessageType.Error:
+          return '❌';
+        default:
+          return '🔔';
+      }
     }
 
 

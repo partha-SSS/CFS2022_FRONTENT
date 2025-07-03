@@ -2,7 +2,7 @@ import { RestService } from './../../_service/rest.service';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LOGIN_MASTER, SystemValues } from '../Models';
+import { LOGIN_MASTER, MessageType, ShowMessage, SystemValues } from '../Models';
 import { InAppMessageService } from 'src/app/_service';
 import { sm_parameter } from '../Models/sm_parameter';
 import { HttpClient } from '@angular/common/http';
@@ -33,9 +33,12 @@ export class LoginComponent implements OnInit {
   // ardbBrnMst: any[] = [];
   systemParam: sm_parameter[] = [];
   // genparam=new p_gen_param();
-  isLoading = false;
-  showAlert = false;
-  alertMsg = '';
+ alertMsgType: string;
+   alertMsg: string;
+   disabledAll = false;
+   showAlert = false;
+   isLoading = false;
+   showMsg: ShowMessage;
   ipAddress: any;
   showUnlockUsr = false;
   usrToUnlock: any;
@@ -195,17 +198,20 @@ export class LoginComponent implements OnInit {
         this.userData = data;
         this.isLoading=false;
         if(this.userData[0]?.user_type=="D"){
-          this.showAlert=true;
-          this.alertMsg='User id was Locked, Contact to Administrator!'
+          // this.showAlert=true;
+          // this.alertMsg='User id was Locked, Contact to Administrator!'
           this.isLoading=false;
+        this.HandleMessage(true, MessageType.Error, `User id was Locked, Contact to Administrator!`);
+
           this.loginForm.invalid;
           return true;
         }
 
        }
        else{
-        this.showAlert=true;
-        this.alertMsg='Somthing was wrong, try again..'
+        // this.showAlert=true;
+        // this.alertMsg='Somthing was wrong, try again..'
+        this.HandleMessage(true, MessageType.Error, `Somthing was wrong, try again..`);
         this.isLoading=false;
         return
        }
@@ -238,8 +244,10 @@ export class LoginComponent implements OnInit {
     }
     if(this.userData[0]?.user_type != 'A' &&  this.userData[0]?.brn_cd!=this.f.branch.value){
         this.f.branch.disable() ;
-        this.showAlert=true;
-        this.alertMsg='User only signed into that branch where they were assigned.'
+        // this.showAlert=true;
+        // this.alertMsg='User only signed into that branch where they were assigned.'
+        this.HandleMessage(true, MessageType.Error, `User only signed into that branch where they were assigned.`);
+
         return
     }
     else{
@@ -287,14 +295,18 @@ export class LoginComponent implements OnInit {
 
 
             if(this.wrongAttamt==1){
-              this.showAlert = true;
+              // this.showAlert = true;
               this.isLoading=false;
-              this.alertMsg = `Invalid UserName Or Password,(Wrong Attamt - ${this.wrongAttamt})`;
+              this.HandleMessage(true, MessageType.Error, `Invalid UserName Or Password, (Wrong Attamt - ${this.wrongAttamt})`);
+
+              // this.alertMsg = `Invalid UserName Or Password,(Wrong Attamt - ${this.wrongAttamt})`;
             }
             else if(this.wrongAttamt==2){
-              this.showAlert = true;
+              // this.showAlert = true;
               this.isLoading=false;
-              this.alertMsg = `Wrong Attamt - ${this.wrongAttamt}, After one more wrong attamt ID will be locked `;
+              this.HandleMessage(true, MessageType.Error, `Wrong Attamt - ${this.wrongAttamt}, After one more wrong attamt ID will be locked `);
+
+              // this.alertMsg = `Wrong Attamt - ${this.wrongAttamt}, After one more wrong attamt ID will be locked `;
             }
            else if(this.wrongAttamt>2){
               var dc={
@@ -304,16 +316,20 @@ export class LoginComponent implements OnInit {
               this.rstSvc.addUpdDel<any>('Sys/DeleteUserMaster', dc).subscribe(
                 res => {
                   if(res==0){
-                    this.showAlert = true;
+                    // this.showAlert = true;
                     this.isLoading=false;
-                    this.alertMsg = 'User id was locked, Contact to Administrator!';
+                    this.HandleMessage(true, MessageType.Error, `User id was locked, Contact to Administrator!`);
+
+                    // this.alertMsg = 'User id was locked, Contact to Administrator!';
                   }
                 })
             }
             else{
-              this.showAlert = true;
+              this.HandleMessage(true, MessageType.Error, `Invalid UserName Or Password,(Wrong Attamt - ${this.wrongAttamt})`);
+
+              // this.showAlert = true;
               this.isLoading=false;
-              this.alertMsg = `Invalid UserName Or Password,(Wrong Attamt - ${this.wrongAttamt})`;
+              // this.alertMsg = `Invalid UserName Or Password,(Wrong Attamt - ${this.wrongAttamt})`;
             }
 
             debugger
@@ -322,9 +338,11 @@ export class LoginComponent implements OnInit {
             //console.log(res[0])
 
             if (res[0].login_status === "Y") {
-              this.showAlert = true;
+              // this.showAlert = true;
               this.isLoading=false;
-              this.alertMsg = 'User id already logged in another machine;';
+              // this.alertMsg = 'User id already logged in another machine;';
+              this.HandleMessage(true, MessageType.Error, 'User id already logged in another machine;');
+
             
               this.usrToUnlock = res[0];
               return;
@@ -352,8 +370,10 @@ export class LoginComponent implements OnInit {
         },
         err => {
           this.isLoading = false;
-          this.showAlert = true;
-          this.alertMsg = 'Invalid Credential !!!!!';
+          // this.showAlert = true;
+          // this.alertMsg = 'Invalid Credential !!!!!';
+          this.HandleMessage(true, MessageType.Error, 'Invalid Credential !!!!!');
+
         }
       ),
       err => {
@@ -452,8 +472,10 @@ export class LoginComponent implements OnInit {
 
         catch (exception) {
           this.isLoading = false;
-          this.showAlert = true;
-          this.alertMsg = 'Initialization Failed. Contact Administrator !';
+          // this.showAlert = true;
+          this.HandleMessage(true, MessageType.Error, 'Initialization Failed. Contact Administrator !');
+
+          // this.alertMsg = 'Initialization Failed. Contact Administrator !';
         }
       },
       sysErr => { }
@@ -525,8 +547,7 @@ export class LoginComponent implements OnInit {
        this.userData = data;
        if(this.userData){
         if(this.userData[0]?.user_type=="D"){
-          this.showAlert=true;
-          this.alertMsg='User id was Locked, Contact to Administrator!'
+          this.HandleMessage(true, MessageType.Error, 'User id was Locked, Contact to Administrator!');
           this.isLoading=false;
           this.loginForm.disable();
           return true;
@@ -535,9 +556,9 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('userType',this.userData[0]?.user_type)
        this.loginForm.patchValue({branch:this.userData[0]?.user_type != 'A' ?  this.userData[0]?.brn_cd : ''})
        this.userData[0]?.user_type != 'A' ? this.f.branch.disable() : this.f.branch.enable();
-       this.showAlert = this.userData[0]?.login_status == 'Y' ? true : false;
-       this.alertMsg = this.userData[0]?.login_status == 'Y' ? 'User id already logged in another machine' : '';
-       }
+      this.HandleMessage(this.userData[0]?.login_status == 'Y', MessageType.Error, this.userData[0]?.login_status == 'Y' ? 'User id already logged into another machine' : '');
+       
+      }
        // if (this.userData[0].user_type != 'A') {
       //   this.loginForm.patchValue({
       //     branch: this.userData[0].brn_cd
@@ -587,8 +608,9 @@ export class LoginComponent implements OnInit {
             }
 
           if (!ipMatched) {
-            this.showAlert = true;
-            this.alertMsg = 'IP not allowed to access, contact support.';
+            // this.showAlert = true;
+              this.HandleMessage(true, MessageType.Error, 'IP not allowed to access, contact support.');
+           
             this.loginForm.disable();
             resolve(false);
           } else {
@@ -601,6 +623,46 @@ export class LoginComponent implements OnInit {
     )
 
   }
+  getAlertClass(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return 'alert-success';
+    case MessageType.Warning:
+      return 'alert-warning';
+    case MessageType.Info:
+      return 'alert-info';
+    case MessageType.Error:
+      return 'alert-danger';
+    default:
+      return 'alert-info';
+  }
+}
+private HandleMessage(show: boolean, type: MessageType = null, message: string = null) {
+  this.showMsg = new ShowMessage();
+  this.showMsg.Show = show;
+  this.showMsg.Type = type;
+  this.showMsg.Message = message;
 
+  if (show) {
+    setTimeout(() => {
+      this.showMsg.Show = false;
+    }, 5000); // auto-close after 4 sec
+  }
+}
+
+getAlertIcon(type: MessageType): string {
+  switch (type) {
+    case MessageType.Sucess:
+      return '✅';
+    case MessageType.Warning:
+      return '⚠️';
+    case MessageType.Info:
+      return 'ℹ️';
+    case MessageType.Error:
+      return '❌';
+    default:
+      return '🔔';
+  }
+}
 
 }

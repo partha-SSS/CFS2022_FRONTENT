@@ -26,7 +26,7 @@ export class NeftInwardReportComponent implements OnInit ,AfterViewInit{
 @ViewChild(MatPaginator) paginator: MatPaginator;
 @ViewChild(MatSort) sort: MatSort;
 dataSource = new MatTableDataSource()
-displayedColumns: string[] = ['trans_dt','trans_cd', 'receive_type', 'bank_cr_acc_no', 'bank_cr_acc_name','amount','payment_ref_no','sender_name','sender_acc_no','sender_ifsc_code','status'];
+displayedColumns: string[] = ['brn_cd','trans_dt','trans_cd', 'receive_type', 'bank_cr_acc_no', 'bank_cr_acc_name','amount','payment_ref_no','sender_name','sender_acc_no','sender_ifsc_code','status'];
 notvalidate:boolean=false;
 date_msg:any;
 modalRef: BsModalRef;
@@ -140,8 +140,21 @@ public SubmitReport() {
         this.comSer.SnackBar_Nodata()
           this.isLoading=false
       } 
-      this.dataSource.data=this.reportData
-      this.itemsPerPage=this.reportData.length % 50 <=0 ? this.reportData.length: this.reportData.length % 50
+      else{
+        
+        if(localStorage.getItem('userType')=='A'){
+          
+          this.dataSource.data=this.reportData
+            console.log(this.dataSource.data);
+
+        }else{
+          this.dataSource.data=this.reportData.filter(e=>e.brn_cd==this.sys.BranchCode);
+            console.log(this.dataSource.data);
+
+        }
+
+      }
+      // this.itemsPerPage=this.reportData.length % 50 <=0 ? this.reportData.length: this.reportData.length % 50
   
       this.isLoading=false
       // if(this.reportData.length<50){
@@ -149,16 +162,12 @@ public SubmitReport() {
       // }
       // this.pageChange=document.getElementById('chngPage');
       // // this.pageChange.click()
-      this.setPage(2);
-      this.setPage(1);
+      // this.setPage(2);
+      // this.setPage(1);
       this.modalRef.hide();
-      this.reportData.forEach(e=>{
-        this.currSum+=e.curr_bal;
-        this.clrSum+=e.clr_bal
-        this.prnSum+=e.prn_amt;
-        this.penalSum+=e.penal_amt
-        this.inttSum+=e.intt_amt
-      })
+      // this.reportData.forEach(e=>{
+      //   this.currSum+=e.amount;
+      // })
       },
       err => {
          this.isLoading = false;

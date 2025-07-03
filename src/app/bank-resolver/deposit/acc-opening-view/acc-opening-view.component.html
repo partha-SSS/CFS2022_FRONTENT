@@ -25,14 +25,9 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div> -->
-    <div *ngIf="showMsg && showMsg.Show" class="col-12 mt-1">
-      <div class="alert alert-dismissible fade show" role="alert" [ngClass]="{'alert-success': showMsg.Type === 0,
-     'alert-warning':showMsg.Type === 1, 'alert-info':showMsg.Type === 2, 'alert-danger':showMsg.Type === 3 }">
-        <strong>{{showMsg.Message}}</strong>
-        <button type="button" class="close" data-dismiss="alert" (click)="closeAlertMsg()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
+    <div *ngIf="showMsg?.Show" class="custom-alert-popup animate-popup" [ngClass]="getAlertClass(showMsg.Type)">
+      <span class="alert-icon">{{ getAlertIcon(showMsg.Type) }}</span>
+      <span class="alert-text">{{ showMsg.Message }}</span>
     </div>
 
     <div class="row">
@@ -444,7 +439,7 @@
               <input [readonly]="true" [(ngModel)]="tm_deposit.curr_bal" style="height:25px; text-align-last: right;" type="number" min="0" step='any'
                 class="form-control form-control-sm text-capitalize" id="dep_cur_bal" placeholder="Curr. Balance">
                 <small for="mis_cert_no">Cert. No. / LF No.</small>
-                <input [(ngModel)]="tm_deposit.cert_no" [disabled]='disableAll' style="height:25px" type="text" placeholder="Cert. No. / LF No."
+                <input [(ngModel)]="tm_deposit.cert_no"  style="height:25px" type="text" placeholder="Cert. No. / LF No."
                   class="form-control form-control-sm text-capitalize" id="mis_cert_no">
                   <small for="ext_instl_tot">Set Minimum A/C Balance</small>
                   <input [disabled]='disableAll' [(ngModel)]="tm_deposit.ext_instl_tot" style="height:25px; text-align-last: right;" type="number" min="0" step='any'
@@ -567,7 +562,7 @@
 
             <div class="form-group col-2">
               <small for="dep_cert_no">Cert. No. / LF No.</small>
-              <input [readonly]="true" [(ngModel)]="tm_deposit.cert_no" style="height:25px" type="text"
+              <input  [(ngModel)]="tm_deposit.cert_no" style="height:25px" type="text"
                 class="form-control form-control-sm text-capitalize" id="dep_cert_no">
             </div>
 
@@ -734,7 +729,7 @@
 
             <div class="form-group col-2">
               <small for="dbs_cert_no">Cert. No. / LF No.</small>
-              <input [(ngModel)]="tm_deposit.cert_no" [readonly]="true" style="height:25px" type="text"
+              <input [(ngModel)]="tm_deposit.cert_no"  style="height:25px" type="text"
                 class="form-control form-control-sm text-capitalize" id="dbs_cert_no">
             </div>
 
@@ -888,7 +883,7 @@
 
             <div class="form-group col-2">
               <small for="term_dep_cert_no">Cert. No. / LF No.</small>
-              <input [(ngModel)]="tm_deposit.cert_no" [readonly]="true" style="height:25px" type="text"
+              <input [(ngModel)]="tm_deposit.cert_no"  style="height:25px" type="text"
                 class="form-control form-control-sm text-capitalize" id="term_dep_cert_no">
             </div>
 
@@ -1036,7 +1031,7 @@
 
             <div class="form-group col-2">
               <small for="mis_cert_no">Cert. No. / LF No.</small>
-              <input [(ngModel)]="tm_deposit.cert_no" [readonly]="true" style="height:25px" type="text"
+              <input [(ngModel)]="tm_deposit.cert_no"  style="height:25px" type="text"
                 class="form-control form-control-sm text-capitalize" id="mis_cert_no">
             </div>
 
@@ -1216,7 +1211,7 @@
           <div class="form-row">
             <div class="form-group col-3">
               <small for="mis_cert_no">Cert. No. / LF No.</small>
-              <input [(ngModel)]="tm_deposit.cert_no" [disabled]='disableAll' style="height:25px" type="text"
+              <input [(ngModel)]="tm_deposit.cert_no"  style="height:25px" type="text"
                 class="form-control form-control-sm text-capitalize" id="mis_cert_no" placeholder="Cert. No. / LF No.">
             </div>
           </div>
@@ -1394,7 +1389,7 @@
                 step='any' class="form-control form-control-sm text-capitalize" id="curr_cur_bal"
                 placeholder="Curr. Balance">
                 <small for="mis_cert_no">Cert. No. / LF No.</small>
-                <input [(ngModel)]="tm_deposit.cert_no" [disabled]='disableAll' style="height:25px" type="text"
+                <input [(ngModel)]="tm_deposit.cert_no"  style="height:25px" type="text"
                   class="form-control form-control-sm text-capitalize" id="mis_cert_no" placeholder="Cert. No. / LF No.">
                   <small for="ext_instl_tot">Set Minimum A/C Balance</small>
                   <input [disabled]='disableAll' [(ngModel)]="tm_deposit.ext_instl_tot" style="height:25px; text-align-last: right;" type="number" min="0" step='any'
@@ -1761,15 +1756,7 @@
       </div>
     </div>
 
-    <div *ngIf="showMsg && showMsg.Show" class="col-12 mt-1">
-      <div class="alert alert-dismissible fade show" role="alert" [ngClass]="{'alert-success': showMsg.Type === 0,
-     'alert-warning':showMsg.Type === 1, 'alert-info':showMsg.Type === 2, 'alert-danger':showMsg.Type === 3 }">
-        <strong>{{showMsg.Message}}</strong>
-        <button type="button" class="close" data-dismiss="alert" (click)="closeAlertMsg()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-    </div>
+    
 
   </div>
 

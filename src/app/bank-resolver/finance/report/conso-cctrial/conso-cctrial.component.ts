@@ -26,9 +26,9 @@ import jspdf from 'jspdf';
 })
 export class ConsoCCTrialComponent implements OnInit ,AfterViewInit{
   // displayedColumns: string[] = ['acc_cd', 'acc_name', 'opng_dr', 'dr', 'cr', 'clos_dr'];
-  dataSource=new MatTableDataSource();
-  dataSource1=new MatTableDataSource();
-  dataSource2=new MatTableDataSource();
+  dataSource:any[]=[];
+  dataSource1:any[]=[];
+  dataSource2:any[]=[];
 
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -361,18 +361,18 @@ exportAsPDF() {
   });
 }
 ngAfterViewInit() {
-  this.dataSource.paginator = this.paginator;
-  this.dataSource.sort = this.sort;
+  // this.dataSource.paginator = this.paginator;
+  // this.dataSource.sort = this.sort;
 }
 
-applyFilter(event: Event) {
-  const filterValue = (event.target as HTMLInputElement).value;
-  this.dataSource.filter = filterValue.trim().toLowerCase();
+// applyFilter(event: Event) {
+//   const filterValue = (event.target as HTMLInputElement).value;
+//   this.dataSource.filter = filterValue.trim().toLowerCase();
 
-  if (this.dataSource.paginator) {
-    this.dataSource.paginator.firstPage();
-  }
-}
+//   if (this.dataSource.paginator) {
+//     this.dataSource.paginator.firstPage();
+//   }
+// }
 
 
 }
